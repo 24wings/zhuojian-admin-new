@@ -1,0 +1,37 @@
+<nz-breadcrumb style="margin:12px 0;">
+    <nz-breadcrumb-item>
+        <a> 系统管理</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item>
+        <a routerLink="/admin/shop/product-manage"> 元数据管理</a>
+    </nz-breadcrumb-item>
+</nz-breadcrumb>
+
+
+<div class="container bg-gray">
+    <div class="container bg-white">
+        <!-- <div style="margin-bottom: 16px;">
+          Tab position：
+          <nz-select [(ngModel)]="position" style="width: 80px;">
+              <nz-option *ngFor="let option of options" [nzLabel]="option.label" [nzValue]="option.value">
+              </nz-option>
+          </nz-select>
+      </div> -->
+        <nz-tabset [nzSize]="'large'">
+            <nz-tab [nzTitle]="'元数据' ">
+                Content of tab
+
+            </nz-tab>
+            <nz-tab [nzTitle]="'字段'">
+                <nz-tabset [nzTabPosition]="'left'" [nzType]="'line'">
+                    <nz-tab *ngFor="let tab of tabs" [nzTitle]="tab.groupName">
+                        Content of tab {{ tab }}
+                    </nz-tab>
+                </nz-tabset>
+            </nz-tab>
+
+        </nz-tabset>
+
+    </div>
+
+</div>

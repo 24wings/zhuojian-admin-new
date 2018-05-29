@@ -1,0 +1,180 @@
+<div class="container">
+  <nz-breadcrumb style="margin:12px 0;">
+    <nz-breadcrumb-item>
+      <a> 系统管理</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item>
+      <a routerLink="/admin/system/role"> 栏目管理</a>
+    </nz-breadcrumb-item>
+  </nz-breadcrumb>
+</div>
+
+
+<div class="container bg-gray">
+  <div style="background:#fff;padding:15px;padding-top:50px;">
+    <button nz-button nzType='primary' style="margin-right:50px;" (click)="state=ViewState.Create">+新建栏目</button>
+    <button nz-button nzType='danger' (click)="deleteModules()">删除选中</button>
+    <nz-alert style="margin:40px auto" nzType="info" [nzMessage]="'已经选择了'+total+'项'" nzShowIcon></nz-alert>
+    <nz-table #ajaxTable [nzData]="dataSet" [nzShowPagination]="false" [nzLoading]="loading">
+      <thead (nzSortChange)="sort($event)" nzSingleSort>
+        <tr>
+          <th nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
+
+          <th nzShowSort nzShowFilter (nzFilterChange)="search($event)">模块</th>
+          <th nzShowFilter>上级</th>
+          <th nzShowSort nzSortKey="email">
+            <span>关键字</span>
+          </th>
+          <th>
+            链接
+          </th>
+          <th>排序</th>
+          <th>上次更新时间</th>
+          <th>操作</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of ajaxTable.data">
+          <td nzShowCheckbox [(nzChecked)]="data.checked"></td>
+          <td>{{data.name }}</td>
+          <td>{{data.parent}}</td>
+          <td>{{data.keyword}}</td>
+          <td>{{data.link}}</td>
+          <td>{{data.sort}}</td>
+          <td>{{data.update_at | date:'yyyy-mm-dd'}}</td>
+          <td>
+            <button nz-button nzType='danger' [style.visibility]="data.can_delete?'visible':'hidden'" (click)="deleteModule(data.id)"
+              *ngIf="data.can_delete">删除</button>
+            <button nz-button nzType='primary' (click)="selectedModule=data;state=ViewState.Update">修改</button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <nz-pagination [nzPageIndex]="pageIndex" [nzTotal]="total" nzShowSizeChanger (nzPageIndexChange)="pageIndex=$event;getModulePage()"
+      [nzPageSize]="pageSize" style="text-align:right"></nz-pagination>
+  </div>
+</div>
+
+
+<!-- 新增栏目 -->
+<nz-modal [(nzVisible)]="ViewState.Create==state" [nzWidth]="800" nzTitle="新增栏目" (nzOnCancel)="state=ViewState.List" (nzOnOk)="createModule();state=ViewState.List">
+  <div nz-form>
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>栏目名称
+
+      </nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24">
+        <input nz-input [(ngModel)]="newModule.name">
+
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="password" nzRequired>栏目名字</nz-form-label>
+
+      <nz-form-control [nzSm]="14" [nzXs]="24">
+        <nz-select nzPlaceHolder="选择分类" [(ngModel)]="newModule.parent_id " nzPlaceHolder="选择上级模块">
+          <nz-option nzValue="" nzLabel="顶级栏目"></nz-option>
+          <nz-option [nzValue]="module.id" [nzLabel]="module.name" *ngFor="let module of dataSet"></nz-option>
+
+        </nz-select>
+
+        <!-- <nz-form-explain *ngIf="validateForm.get('password').dirty && validateForm.get('password').errors">Please input your password!</nz-form-explain> -->
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>栏目链接
+
+      </nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24">
+        <input nz-input [(ngModel)]="newModule.link">
+
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>排序
+
+      </nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24">
+        <input nz-input [(ngModel)]="newModule.sort" type="number">
+
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>图标
+
+      </nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24">
+        <input nz-input [(ngModel)]="newModule.icon_font">
+      </nz-form-control>
+    </nz-form-item>
+  </div>
+</nz-modal>
+
+
+
+<!-- 修改栏目 -->
+<nz-modal [(nzVisible)]="ViewState.Update==state" [nzWidth]="800" nzTitle="修改栏目" (nzOnCancel)="state=ViewState.List" (nzOnOk)="updateModule();state=ViewState.List">
+  <div *ngIf="selectedModule">
+    <div nz-form>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>栏目名称
+
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input [(ngModel)]="selectedModule.name">
+
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>栏目名字</nz-form-label>
+
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <!-- <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired *ngIf="sel"> 栏目名字</nz-form-label> -->
+          <nz-select [(ngModel)]="selectedModule.parent_id " nzPlaceHolder="选择上级模块">
+            <nz-option [nzValue]="" nzLabel="顶级栏目"></nz-option>
+            <nz-option [nzValue]="module.id" [nzLabel]="(module.name?module.name:'')" *ngFor="let module of dataSet"></nz-option>
+
+          </nz-select>
+
+          <!-- <nz-form-explain *ngIf="validateForm.get('password').dirty && validateForm.get('password').errors">Please input your password!</nz-form-explain> -->
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>关键字
+
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input [(ngModel)]="selectedModule.key_word">
+
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>栏目链接
+
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input [(ngModel)]="selectedModule.link">
+
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>排序
+
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input [(ngModel)]="selectedModule.sort" type="number">
+
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>图标
+
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input [(ngModel)]="selectedModule.icon_font">
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+</nz-modal>

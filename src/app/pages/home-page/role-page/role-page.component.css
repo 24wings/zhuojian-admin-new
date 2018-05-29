@@ -1,0 +1,9 @@
+[nz-button].large {
+  padding: 0px 40px !important;
+  margin-bottom: 0px;
+  height: auto !important;
+}
+
+nz-button-group [nz-button].large {
+  margin-right: 0;
+}

@@ -1,0 +1,94 @@
+<nz-layout style="text-align:left;">
+    <nz-sider nzCollapsible [(nzCollapsed)]="isCollapsed" [nzWidth]="300" [nzTrigger]="null" class="sidebar" style=" 
+  width: 300px;
+  min-height: 100vw;
+  background: #001529;
+  ">
+        <div class="logo" style="background:#001529">
+            <img src="/assets/images/logo.svg" alt="logo">
+        </div>
+        <ul nz-menu [nzMode]="'inline'" nzTheme='dark' [nzInlineCollapsed]="isCollapsed" style="background: #00151A;" *ngFor="let group of groups">
+            <li nz-submenu>
+                <span title>
+
+          <i class=" anticon iconfont icon-guanliyuan1" style="margin-right: 8px"></i>
+          <span>{{group.label}}</span>
+                </span>
+                <ul>
+                    <li *ngFor="let child of group.children" nz-menu-item [routerLink]="child.link" routerLinkActive="ant-menu-item-selected">
+                        <i class="icon-guanliyuan iconfont"></i> {{child.label}}</li>
+                </ul>
+            </li>
+        </ul>
+
+        <!-- <ul nz-menu [nzMode]="'inline'" nzTheme='dark' [nzInlineCollapsed]="isCollapsed" style="background: #00151A;">
+      <li nz-submenu>
+        <span title>
+
+          <i class=" anticon iconfont icon-guanliyuan1" style="margin-right: 8px"></i>
+          <span>商城</span>
+        </span>
+        <ul>
+          <li nz-menu-item routerLink="/admin/shop/product-meta" routerLinkActive="ant-menu-item-selected">
+            <i class="icon-guanliyuan iconfont"></i> 元数据</li>
+          <li nz-menu-item routerLink="/admin/shop/product-manage" routerLinkActive="ant-menu-item-selected">
+            <i class="icon-fenlei iconfont"></i> 产品</li>
+          <li nz-menu-item routerLink="/admin/article/article-manage" routerLinkActive="ant-menu-item-selected">
+            <i class="icon-renshiguanli iconfont"></i>订单</li>
+          <!-- <li nz-menu-item routerLink="/admin/article/article-analysis" routerLinkActive="ant-menu-item-selected"> -->
+        <!-- <i class="icon-renshiguanli iconfont"></i>文章统计</li> --
+
+
+        </ul>
+      </li>
+    </ul> -->
+
+
+
+
+
+
+    </nz-sider>
+    <nz-layout>
+        <nz-header style="background: #fff; padding:0;">
+            <i class="anticon trigger" [class.anticon-menu-fold]="!isCollapsed" [class.anticon-menu-unfold]="isCollapsed" (click)="isCollapsed=!isCollapsed"></i>
+
+            <div class="right">
+                <div class="action">
+
+                    <nz-badge [nzCount]="sendProductOrdersNum">
+                        <ng-template #content>
+                            <i class="anticon anticon-bell head-example" style="background:transparent;">
+              </i>
+                        </ng-template>
+                    </nz-badge>
+                </div>
+                <div class="action">
+                    <ul nz-menu [nzMode]="'horizontal'">
+                        <li nz-submenu>
+                            <span title>
+                <i class="anticon anticon-setting"></i> 你好，{{shop_user_name}}</span>
+                            <ul>
+
+                                <li nz-menu-group>
+                                    <span title (click)="logout()">登出</span>
+
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nz-header>
+        <nz-content style="margin:0;background:#fff">
+
+            <router-outlet></router-outlet>
+        </nz-content>
+        <nz-footer style="text-align: center;">Powerd by 刺月无影
+            <!-- <br> QQ :2121718893
+      <br> phone:13419597065 -->
+
+        </nz-footer>
+
+    </nz-layout>
+</nz-layout>

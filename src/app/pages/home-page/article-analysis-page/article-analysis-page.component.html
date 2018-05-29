@@ -1,0 +1,316 @@
+<div class="container">
+    <nz-breadcrumb style="margin:12px 0;">
+        <nz-breadcrumb-item>
+            <a> 文章管理</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+            <a routerLink="/admin/article/article-type"> 文章管理</a>
+        </nz-breadcrumb-item>
+    </nz-breadcrumb>
+</div>
+<div class="container bg-gray">
+    <div class="container bg-white">
+        <nz-list [nzDataSource]="dataSet" [nzRenderItem]="card" [nzGrid]="{gutter: 24, xs: 24, sm: 12, md: 6, lg: 6, xl: 6}">
+            <ng-template #card let-item>
+                <nz-list-item [nzContent]="nzContent">
+                    <ng-template #nzContent>
+                        <nz-card [nzTitle]="item.key">
+                            <nz-badge [nzCount]="25"></nz-badge>
+                        </nz-card>
+                    </ng-template>
+                </nz-list-item>
+            </ng-template>
+        </nz-list>
+
+
+        <div class="article-publish-container">
+            <div>
+
+                <nz-card style="width:900px;" [nzBordered]="false" nzTitle="文章发布" [nzExtra]="extraTemplate">
+                    <div id="mountNode" style="width:900px;"></div>
+                </nz-card>
+
+            </div>
+            <ng-template #extraTemplate>
+                <a>全部文章</a>
+            </ng-template>
+
+
+            <div class="late-article" style="min-width:400px  !important;">
+                <span>最新文章</span>
+                <div style="max-height:400px;overflow:scroll;">
+                    <nz-list class="demo-loadmore-list" style="width:400px;" [nzDataSource]="dataSet" [nzItemLayout]="'horizontal'" [nzLoading]="loading" [nzRenderItem]="item" [nzLoadMore]="loadMore">
+                        <ng-template #item let-item>
+                            <nz-list-item [nzContent]="'content'" [nzActions]="[editAction,moreAction]">
+                                <ng-template #editAction><a (click)="edit(item)">阅读</a></ng-template>
+                                <ng-template #moreAction><a (click)="edit(item)">审核</a></ng-template>
+                                <nz-list-item-meta [nzTitle]="nzTitle" nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" [nzDescription]="item.item">
+                                    <ng-template #nzTitle>
+                                        <a href="https://ng.ant.design">{{item.item}}</a>
+                                    </ng-template>
+                                </nz-list-item-meta>
+                            </nz-list-item>
+                        </ng-template>
+                        <ng-template #loadMore>
+                            <div *ngIf="showLoadingMore" class="loadmore" style="margin-bottom:40px;">
+                                <button nz-button *ngIf="!loadingMore" (click)="onLoadMore()">更多</button>
+                                <nz-spin *ngIf="loadingMore" [nzSpinning]="loadingMore"></nz-spin>
+                            </div>
+                        </ng-template>
+                    </nz-list>
+                </div>
+            </div>
+
+
+        </div>
+        <div nz-row class="flex-center">
+
+
+            <div nz-col nzSpan="14" [nzOffset]="1">
+
+                <nz-table #basicTable [nzData]="dataSet" [nzShowPagination]="false" [nzTitle]="'各类文章类型'">
+                    <thead>
+                        <tr>
+                            <th>分类名称</th>
+                            <th>小说</th>
+                            <th>诗歌</th>
+                            <th>随笔</th>
+                            <th>散文</th>
+                            <th>情感</th>
+                            <th>历史</th>
+                            <th>生活</th>
+                            <th>青春</th>
+                            <th>热点</th>
+                            <th>文艺</th>
+                            <th>励志</th>
+                            <th>心理</th>
+                            <th>经典</th>
+                            <th>科普</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let data of basicTable.data">
+                            <td>{{data.key}}</td>
+                            <td *ngFor="let value of data.values">{{value}}</td>
+
+                        </tr>
+                    </tbody>
+                </nz-table>
+            </div>
+            <div nz-col nzSpan="7" [nzOffset]="1">
+
+                <nz-card style="width:400px;" [nzBordered]="false" nzTitle="类型比例" [nzExtra]="categoryTemplate">
+                    <div id="category" style="width:400px;"></div>
+                </nz-card>
+
+            </div>
+            <ng-template #categoryTemplate>
+                <a>文章分类</a>
+            </ng-template>
+        </div>
+        <div style="display:flex;">
+            <div>
+                <span>今日阅读排行榜</span>
+                <div style="max-height:400px;">
+                    <nz-list class="demo-loadmore-list" style="width:500px;" [nzDataSource]="dataSet" [nzItemLayout]="'horizontal'" [nzLoading]="loading" [nzRenderItem]="item" [nzLoadMore]="loadMore">
+                        <ng-template #item let-item>
+                            <nz-list-item [nzContent]="'content'" [nzActions]="[editAction,moreAction]">
+                                <ng-template #editAction><a (click)="edit(item)">阅读</a></ng-template>
+                                <ng-template #moreAction><a (click)="edit(item)">审核</a></ng-template>
+                                <nz-list-item-meta [nzTitle]="nzTitle" nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" [nzDescription]="item.item">
+                                    <ng-template #nzTitle>
+                                        <a href="https://ng.ant.design">{{item.item}}</a>
+                                    </ng-template>
+                                </nz-list-item-meta>
+                            </nz-list-item>
+                        </ng-template>
+                        <ng-template #loadMore>
+                            <div *ngIf="showLoadingMore" class="loadmore" style="margin-bottom:40px;">
+                                <button nz-button *ngIf="!loadingMore" (click)="onLoadMore()">更多</button>
+                                <nz-spin *ngIf="loadingMore" [nzSpinning]="loadingMore"></nz-spin>
+                            </div>
+                        </ng-template>
+                    </nz-list>
+                </div>
+            </div>
+            <div>
+                <span>本周阅读排行榜</span>
+
+                <div style="max-height:400px;">
+                    <nz-list class="demo-loadmore-list" style="width:500px;" [nzDataSource]="dataSet" [nzItemLayout]="'horizontal'" [nzLoading]="loading" [nzRenderItem]="item" [nzLoadMore]="loadMore">
+                        <ng-template #item let-item>
+                            <nz-list-item [nzContent]="'content'" [nzActions]="[editAction,moreAction]">
+                                <ng-template #editAction><a (click)="edit(item)">阅读</a></ng-template>
+                                <ng-template #moreAction><a (click)="edit(item)">审核</a></ng-template>
+                                <nz-list-item-meta [nzTitle]="nzTitle" nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" [nzDescription]="item.item">
+                                    <ng-template #nzTitle>
+                                        <a href="https://ng.ant.design">{{item.item}}</a>
+                                    </ng-template>
+                                </nz-list-item-meta>
+                            </nz-list-item>
+                        </ng-template>
+                        <ng-template #loadMore>
+                            <div *ngIf="showLoadingMore" class="loadmore" style="margin-bottom:40px;">
+                                <button nz-button *ngIf="!loadingMore" (click)="onLoadMore()">更多</button>
+                                <nz-spin *ngIf="loadingMore" [nzSpinning]="loadingMore"></nz-spin>
+                            </div>
+                        </ng-template>
+                    </nz-list>
+                </div>
+            </div>
+            <div>
+                <span>本月阅读排行榜</span>
+                <div style="max-height:400px;">
+                    <nz-list class="demo-loadmore-list" style="width:500px;" [nzDataSource]="dataSet" [nzItemLayout]="'horizontal'" [nzLoading]="loading" [nzRenderItem]="item" [nzLoadMore]="loadMore">
+                        <ng-template #item let-item>
+                            <nz-list-item [nzContent]="'content'" [nzActions]="[editAction,moreAction]">
+                                <ng-template #editAction><a (click)="edit(item)">阅读</a></ng-template>
+                                <ng-template #moreAction><a (click)="edit(item)">审核</a></ng-template>
+                                <nz-list-item-meta [nzTitle]="nzTitle" nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" [nzDescription]="item.item">
+                                    <ng-template #nzTitle>
+                                        <a href="https://ng.ant.design">{{item.item}}</a>
+                                    </ng-template>
+                                </nz-list-item-meta>
+                            </nz-list-item>
+                        </ng-template>
+                        <ng-template #loadMore>
+                            <div *ngIf="showLoadingMore" class="loadmore" style="margin-bottom:40px;">
+                                <button nz-button *ngIf="!loadingMore" (click)="onLoadMore()">更多</button>
+                                <nz-spin *ngIf="loadingMore" [nzSpinning]="loadingMore"></nz-spin>
+                            </div>
+                        </ng-template>
+                    </nz-list>
+                </div>
+            </div>
+            <div>
+                <span>本站阅读排行榜</span>
+                <div style="max-height:400px;">
+                    <nz-list class="demo-loadmore-list" style="width:500px;" [nzDataSource]="dataSet" [nzItemLayout]="'horizontal'" [nzLoading]="loading" [nzRenderItem]="item" [nzLoadMore]="loadMore">
+                        <ng-template #item let-item>
+                            <nz-list-item [nzContent]="'content'" [nzActions]="[editAction,moreAction]">
+                                <ng-template #editAction><a (click)="edit(item)">阅读</a></ng-template>
+                                <ng-template #moreAction><a (click)="edit(item)">审核</a></ng-template>
+                                <nz-list-item-meta [nzTitle]="nzTitle" nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" [nzDescription]="item.item">
+                                    <ng-template #nzTitle>
+                                        <a href="https://ng.ant.design">{{item.item}}</a>
+                                    </ng-template>
+                                </nz-list-item-meta>
+                            </nz-list-item>
+                        </ng-template>
+                        <ng-template #loadMore>
+                            <div *ngIf="showLoadingMore" class="loadmore" style="margin-bottom:40px;">
+                                <button nz-button *ngIf="!loadingMore" (click)="onLoadMore()">更多</button>
+                                <nz-spin *ngIf="loadingMore" [nzSpinning]="loadingMore"></nz-spin>
+                            </div>
+                        </ng-template>
+                    </nz-list>
+                </div>
+            </div>
+
+
+        </div>
+
+
+        <!--  -->
+        <div style="display:flex">
+            <div>
+                <span>今日阅读排行榜</span>
+                <div style="max-height:400px;">
+                    <nz-list class="demo-loadmore-list" style="width:500px;" [nzDataSource]="dataSet" [nzItemLayout]="'horizontal'" [nzLoading]="loading" [nzRenderItem]="item" [nzLoadMore]="loadMore">
+                        <ng-template #item let-item>
+                            <nz-list-item [nzContent]="'content'" [nzActions]="[editAction,moreAction]">
+                                <ng-template #editAction><a (click)="edit(item)">阅读</a></ng-template>
+                                <ng-template #moreAction><a (click)="edit(item)">审核</a></ng-template>
+                                <nz-list-item-meta [nzTitle]="nzTitle" nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" [nzDescription]="item.item">
+                                    <ng-template #nzTitle>
+                                        <a href="https://ng.ant.design">{{item.item}}</a>
+                                    </ng-template>
+                                </nz-list-item-meta>
+                            </nz-list-item>
+                        </ng-template>
+                        <ng-template #loadMore>
+                            <div *ngIf="showLoadingMore" class="loadmore" style="margin-bottom:40px;">
+                                <button nz-button *ngIf="!loadingMore" (click)="onLoadMore()">更多</button>
+                                <nz-spin *ngIf="loadingMore" [nzSpinning]="loadingMore"></nz-spin>
+                            </div>
+                        </ng-template>
+                    </nz-list>
+                </div>
+            </div>
+            <div>
+                <span>本周阅读排行榜</span>
+
+                <div style="max-height:400px;">
+                    <nz-list class="demo-loadmore-list" style="width:500px;" [nzDataSource]="dataSet" [nzItemLayout]="'horizontal'" [nzLoading]="loading" [nzRenderItem]="item" [nzLoadMore]="loadMore">
+                        <ng-template #item let-item>
+                            <nz-list-item [nzContent]="'content'" [nzActions]="[editAction,moreAction]">
+                                <ng-template #editAction><a (click)="edit(item)">阅读</a></ng-template>
+                                <ng-template #moreAction><a (click)="edit(item)">审核</a></ng-template>
+                                <nz-list-item-meta [nzTitle]="nzTitle" nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" [nzDescription]="item.item">
+                                    <ng-template #nzTitle>
+                                        <a href="https://ng.ant.design">{{item.item}}</a>
+                                    </ng-template>
+                                </nz-list-item-meta>
+                            </nz-list-item>
+                        </ng-template>
+                        <ng-template #loadMore>
+                            <div *ngIf="showLoadingMore" class="loadmore" style="margin-bottom:40px;">
+                                <button nz-button *ngIf="!loadingMore" (click)="onLoadMore()">更多</button>
+                                <nz-spin *ngIf="loadingMore" [nzSpinning]="loadingMore"></nz-spin>
+                            </div>
+                        </ng-template>
+                    </nz-list>
+                </div>
+            </div>
+            <div>
+                <span>本月阅读排行榜</span>
+                <div style="max-height:400px;">
+                    <nz-list class="demo-loadmore-list" style="width:500px;" [nzDataSource]="dataSet" [nzItemLayout]="'horizontal'" [nzLoading]="loading" [nzRenderItem]="item" [nzLoadMore]="loadMore">
+                        <ng-template #item let-item>
+                            <nz-list-item [nzContent]="'content'" [nzActions]="[editAction,moreAction]">
+                                <ng-template #editAction><a (click)="edit(item)">阅读</a></ng-template>
+                                <ng-template #moreAction><a (click)="edit(item)">审核</a></ng-template>
+                                <nz-list-item-meta [nzTitle]="nzTitle" nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" [nzDescription]="item.item">
+                                    <ng-template #nzTitle>
+                                        <a href="https://ng.ant.design">{{item.item}}</a>
+                                    </ng-template>
+                                </nz-list-item-meta>
+                            </nz-list-item>
+                        </ng-template>
+                        <ng-template #loadMore>
+                            <div *ngIf="showLoadingMore" class="loadmore" style="margin-bottom:40px;">
+                                <button nz-button *ngIf="!loadingMore" (click)="onLoadMore()">更多</button>
+                                <nz-spin *ngIf="loadingMore" [nzSpinning]="loadingMore"></nz-spin>
+                            </div>
+                        </ng-template>
+                    </nz-list>
+                </div>
+            </div>
+            <div>
+                <span>本站阅读排行榜</span>
+                <div style="max-height:400px;">
+                    <nz-list class="demo-loadmore-list" style="width:500px;" [nzDataSource]="dataSet" [nzItemLayout]="'horizontal'" [nzLoading]="loading" [nzRenderItem]="item" [nzLoadMore]="loadMore">
+                        <ng-template #item let-item>
+                            <nz-list-item [nzContent]="'content'" [nzActions]="[editAction,moreAction]">
+                                <ng-template #editAction><a (click)="edit(item)">阅读</a></ng-template>
+                                <ng-template #moreAction><a (click)="edit(item)">审核</a></ng-template>
+                                <nz-list-item-meta [nzTitle]="nzTitle" nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" [nzDescription]="item.item">
+                                    <ng-template #nzTitle>
+                                        <a href="https://ng.ant.design">{{item.item}}</a>
+                                    </ng-template>
+                                </nz-list-item-meta>
+                            </nz-list-item>
+                        </ng-template>
+                        <ng-template #loadMore>
+                            <div *ngIf="showLoadingMore" class="loadmore" style="margin-bottom:40px;">
+                                <button nz-button *ngIf="!loadingMore" (click)="onLoadMore()">更多</button>
+                                <nz-spin *ngIf="loadingMore" [nzSpinning]="loadingMore"></nz-spin>
+                            </div>
+                        </ng-template>
+                    </nz-list>
+                </div>
+            </div>
+
+
+        </div>
+    </div>

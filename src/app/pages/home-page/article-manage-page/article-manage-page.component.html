@@ -1,0 +1,296 @@
+<div class="container">
+  <nz-breadcrumb style="margin:12px 0;">
+    <nz-breadcrumb-item>
+      <a> 文章管理</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item>
+      <a routerLink="/admin/article/article-type"> 文章管理</a>
+    </nz-breadcrumb-item>
+  </nz-breadcrumb>
+</div>
+
+
+
+<div class="container bg-gray" *ngIf="state==ViewState.List">
+  <div style="background:#fff;padding:15px;padding-top:50px;">
+    <div>
+      <nz-input-group nzSearch [nzSuffix]="suffixIconButton" style="    max-width: 800px;
+            margin-top: 20px;
+            margin: 66px auto;
+            display: block;
+            margin-top: 20px;">
+        <input type="text" nz-input [(ngModel)]="keyword" placeholder="关键字" (search)="getArticlePage()">
+      </nz-input-group>
+      <ng-template #suffixIconButton>
+        <button nz-button nzType="primary" nzSearch (click)="getArticlePage()">
+          <i class="anticon anticon-search"></i>
+        </button>
+      </ng-template>
+    </div>
+    <div class="space-between" style="padding-right:100px;">
+      <div style="text-align:left;">
+        <nz-button-group>
+          <button nz-button nzType='primary' style="margin-right:50px;" (click)="state=ViewState.Create;initEditor()">发布文章</button>
+          <button nz-button nzType='danger' (click)="deleteArticles()">删除选中</button>
+        </nz-button-group>
+      </div>
+      <div style="text-align: left;padding-right:100px;">
+        <nz-select style="width: 200px;" nzShowSearch nzAllowClear nzPlaceHolder="文章类型" [(ngModel)]="selectedArticleCategoryId">
+          <nz-option [nzLabel]="type.name" [nzValue]="type.id" *ngFor="let type of articleTypes"></nz-option>
+
+
+        </nz-select>
+        <nz-range-picker [(ngModel)]="dateRange" nzShowTime></nz-range-picker>
+      </div>
+    </div>
+
+    <nz-alert style="margin:40px auto" nzType="info" [nzMessage]="'已选择 4 项   涉及人员 20人 清空 '" nzShowIcon></nz-alert>
+    <nz-table #ajaxTable [nzData]="dataSet" [nzShowPagination]="false" [nzLoading]="loading">
+      <thead nzSingleSort>
+        <tr>
+          <th nzShowCheckbox></th>
+
+          <th nzShowSort>ID</th>
+          <th nzShowFilter>名称
+          </th>
+          <th nzShowSort nzSortKey="email">
+            <span>作者</span>
+          </th>
+          <th>
+            示意图
+          </th>
+          <th>排序</th>
+          <th>
+            创建时间
+          </th>
+          <th>上次更新时间
+          </th>
+
+          <th>操作</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of ajaxTable.data">
+          <td nzShowCheckbox [(nzChecked)]="data.checked"></td>
+          <td>{{data.id}}</td>
+          <td>{{data.title }}</td>
+          <td>{{data.auth_name }}</td>
+
+          <td>
+            <img [src]="data.images[0]">
+          </td>
+          <td>{{data.sort }}</td>
+          <td>{{data.created_at|date:'yyyy-MM-dd'}}</td>
+
+          <td>{{data.update_at | date:'yyyy-MM-dd'}}</td>
+          <td>
+            <!-- <button nz-button nzType='danger' (click)="deleteArticle(data.id)">删除</button> -->
+            <button nz-button nzType="primary" *ngIf="!data.is_recommand" (click)="toggleRecommand(data.id,!data.is_recommand)">推荐</button>
+            <button nz-button nzType="default" *ngIf="data.is_recommand" (click)="toggleRecommand(data.id,!data.is_recommand)">取消推荐</button>
+            <button nz-button nzType='primary' (click)=" selectArticle(data);">详情</button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <nz-pagination [nzPageIndex]="pageIndex " [nzTotal]="total " nzShowSizeChanger (nzPageIndexChange)="pageIndex=$event;getArticlePage() "
+      [nzPageSize]="pageSize " style="text-align:right;margin-top: 40px; "></nz-pagination>
+  </div>
+</div>
+
+<!-- {{state}}=={{ViewState.Create}}is {{state==ViewState.Create}} -->
+<!-- 新增文章类型 -->
+<div *ngIf="state==ViewState.Create ">
+
+  <div id="layout ">
+    <div nz-form>
+      <nz-form-item>
+        <nz-form-label [nzSm]="3 " [nzXs]="24 ">发表文章
+
+        </nz-form-label>
+
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="3 " [nzXs]="24 " nzRequired>标题
+
+        </nz-form-label>
+        <nz-form-control [nzSm]="14 " [nzXs]="24 ">
+          <input nz-input [(ngModel)]="newArticle.title ">
+
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item style="margin:40px 0; ">
+        <nz-form-label [nzSm]="3 " [nzXs]="24 " nzRequired>自定义发布时间
+
+        </nz-form-label>
+        <nz-form-control [nzSm]="14 " [nzXs]="24 ">
+          <nz-switch [(ngModel)]="editNewArticleDate "></nz-switch>
+          <nz-date-picker [(ngModel)]="newArticle.created_at " nzShowTime *ngIf="editNewArticleDate "></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="3 " [nzXs]="24 " nzRequired>示例图组
+
+        </nz-form-label>
+        <nz-form-control [nzSm]="14 " [nzXs]="24 ">
+
+          <nz-upload [nzCustomRequest]="upload " [nzAction]="myHttp.ip+common.commonApi.uploadFile " nzListType="picture-card
+              " [(nzFileList)]="fileList " [nzShowButton]="fileList.length < 3 " [nzPreview]="handlePreview ">
+            <i class="anticon anticon-plus "></i>
+            <div class="ant-upload-text ">上传</div>
+          </nz-upload>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="3 " [nzXs]="24 " nzRequired>类型
+
+        </nz-form-label>
+        <nz-form-control [nzSm]="14 " [nzXs]="24 ">
+          <nz-select style="width: 200px; " nzShowSearch nzAllowClear nzPlaceHolder="文章类型 " [(ngModel)]="newArticle.article_categroy_id ">
+            <nz-option [nzLabel]="type.name " [nzValue]="type.id " *ngFor="let type of articleTypes "></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="3 " [nzXs]="24 ">作者
+        </nz-form-label>
+        <nz-form-control [nzSm]="14 " [nzXs]="24 ">
+          <input nz-input [(ngModel)]="author " disabled="disabled ">
+        </nz-form-control>
+      </nz-form-item>
+      <div class="btns ">
+        <nz-button-group>
+          <button nz-button nzType="default" nzSize="large" (click)="editor.show() "> 显示</button>
+          <button nz-button nzType="default" nzSize="large" (click)="editor.hide() "> 隐藏</button>
+          <button nz-button nzType="default" nzSize="large" (click)="editor.getHTML() ">获取内容</button>
+          <button nz-button nzType="default" nzSize="large" (click)="editor.watch() ">读写模式</button>
+          <button nz-button nzType="default" nzSize="large" (click)="editor.unwatch() ">写作模式</button>
+          <button nz-button nzType="default" nzSize="large" (click)="editor.previewing() ">预览</button>
+          <button nz-button nzType="default" nzSize="large" (click)="editor.fullscreen() ">全屏</button>
+          <button nz-button nzType="default" nzSize="large" (click)="editor.showToolbar() ">显示工具条</button>
+          <button nz-button nzType="default" nzSize="large" (click)="editor.hideToolbar() ">隐藏工具条</button>
+
+        </nz-button-group>
+      </div>
+      <div id="test-editormd "></div>
+
+
+
+      <nz-form-item style="margin:40px 0; ">
+        <nz-form-label [nzSm]="3 " [nzXs]="24 " nzRequired>推荐
+
+        </nz-form-label>
+        <nz-form-control [nzSm]="14 " [nzXs]="24 ">
+          <nz-switch [(ngModel)]="newArticle.is_recommand "></nz-switch>
+
+        </nz-form-control>
+      </nz-form-item>
+
+      <div style="margin:40px auto;text-align:center; ">
+        <nz-button-group>
+
+          <button nz-button nzType="primary" nzSize="large " (click)="publishArticle() ">发布</button>
+          <button nz-button nzType="default" nzSize="large " (click)="state=ViewState.List "> 返回</button>
+        </nz-button-group>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container bg-gray " *ngIf="ViewState.Update==state ">
+  <div style="background:#fff;padding:15px;padding-top:50px; ">
+    <!-- 修改文章类型 -->
+    <div *ngIf="selectedArticle ">
+      <h2>修改文章</h2>
+
+      <div id="layout ">
+        <div nz-form>
+          <nz-form-item>
+            <nz-form-label [nzSm]="3 " [nzXs]="24 " nzRequired>标题
+
+            </nz-form-label>
+            <nz-form-control [nzSm]="14 " [nzXs]="24 ">
+              <input nz-input [(ngModel)]="selectedArticle.title ">
+
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item style="margin:40px 0; ">
+            <nz-form-label [nzSm]="3 " [nzXs]="24 " nzRequired>自定义发布时间
+
+            </nz-form-label>
+            <nz-form-control [nzSm]="14 " [nzXs]="24 ">
+              <nz-switch [(ngModel)]="editNewArticleDate "></nz-switch>
+              <nz-date-picker [(ngModel)]="selectedArticle.created_at " nzShowTime *ngIf="editNewArticleDate "></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="3 " [nzXs]="24 " nzRequired>示例图组
+
+            </nz-form-label>
+            <nz-form-control [nzSm]="14 " [nzXs]="24 ">
+
+              <nz-upload [nzCustomRequest]="upload" [nzAction]="myHttp.ip+common.commonApi.uploadFile " nzListType="picture-card" [(nzFileList)]="fileList"
+                [nzShowButton]="fileList.length < 3 " [nzPreview]="handlePreview">
+                <i class="anticon anticon-plus "></i>
+                <div class="ant-upload-text ">上传</div>
+              </nz-upload>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="3 " [nzXs]="24 " nzRequired>类型
+
+            </nz-form-label>
+            <nz-form-control [nzSm]="14 " [nzXs]="24 ">
+              <nz-select style="width: 200px; " nzShowSearch nzAllowClear nzPlaceHolder="文章类型 " [(ngModel)]="selectedArticle.article_categroy_id ">
+                <nz-option [nzLabel]="type.name " [nzValue]="type.id " *ngFor="let type of articleTypes "></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="3 " [nzXs]="24 ">作者
+            </nz-form-label>
+            <nz-form-control [nzSm]="14 " [nzXs]="24 ">
+              <input nz-input [(ngModel)]="author " disabled="disabled">
+            </nz-form-control>
+          </nz-form-item>
+          <div class="btns ">
+            <nz-button-group>
+              <button nz-button nzType="default" nzSize="large " (click)="editor.show() "> 显示</button>
+              <button nz-button nzType="default" nzSize="large " (click)="editor.hide() "> 隐藏</button>
+              <button nz-button nzType="default" nzSize="large " (click)="editor.getHTML() ">获取内容</button>
+              <button nz-button nzType="default" nzSize="large " (click)="editor.watch() ">读写模式</button>
+              <button nz-button nzType="default" nzSize="large " (click)="editor.unwatch() ">写作模式</button>
+              <button nz-button nzType="default" nzSize="large " (click)="editor.previewing() ">预览</button>
+              <button nz-button nzType="default" nzSize="large " (click)="editor.fullscreen() ">全屏</button>
+              <button nz-button nzType="default" nzSize="large " (click)="editor.showToolbar() ">显示工具条</button>
+              <button nz-button nzType="default" nzSize="large " (click)="editor.hideToolbar() ">隐藏工具条</button>
+
+            </nz-button-group>
+          </div>
+          <div id="test-editormd"></div>
+
+
+
+          <nz-form-item style="margin:40px 0; ">
+            <nz-form-label [nzSm]="3" [nzXs]="24" nzRequired>推荐
+
+            </nz-form-label>
+            <nz-form-control [nzSm]="14 " [nzXs]="24 ">
+              <nz-switch [(ngModel)]="selectedArticle.is_recommand"></nz-switch>
+
+            </nz-form-control>
+          </nz-form-item>
+
+          <div style="margin:40px auto;text-align:center;">
+            <nz-button-group>
+
+              <button nz-button nzType="primary" nzSize="large " (click)="updateArticle() ">更新</button>
+              <button nz-button nzType="default" nzSize="large " (click)="state=ViewState.List "> 返回</button>
+            </nz-button-group>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

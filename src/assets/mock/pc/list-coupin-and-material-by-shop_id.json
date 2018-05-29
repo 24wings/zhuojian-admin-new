@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "data": [{
+    "coupon_id": 6,
+    "time_limit": 0,
+    "time_start": "2000-01-01T01:00:00.000Z",
+    "time_end": "2000-01-01T08:00:00.000Z",
+    "can_give_other": 0,
+    "reg_give": 0,
+    "count_limit": 1,
+    "item_limit": 0,
+    "avaliable_items": "",
+    "can_share": 0,
+    "shop_id": 23246,
+    "id": 1,
+    "shopuser_id": 23246,
+    "home_image_url": "http://bangwei-store.oss-cn-beijing.aliyuncs.com//images/1526564422855.png",
+    "ticket_image_url": "http://bangwei-store.oss-cn-beijing.aliyuncs.com//images/1525672997763.png",
+    "created_at": "2018-05-06T22:03:35.000Z",
+    "updated_at": "2018-05-17T05:40:24.000Z",
+    "icon_url": null,
+    "share_image_url": "http://bangwei-store.oss-cn-beijing.aliyuncs.com//images/1525673008312.png",
+    "shop_phone": "13419597065"
+  }]
+}

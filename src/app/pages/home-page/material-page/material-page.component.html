@@ -1,0 +1,321 @@
+<nz-breadcrumb style="margin:12px 0;">
+  <nz-breadcrumb-item>
+    <a> 系统管理</a>
+  </nz-breadcrumb-item>
+  <nz-breadcrumb-item>
+    <a routerLink="/admin/system/material"> 素材管理</a>
+  </nz-breadcrumb-item>
+</nz-breadcrumb>
+
+
+<div style="background:#fff;padding:30px" *ngIf="state==ViewState.ListMaterial ">
+  <div class="table-operations">
+    <button nz-button ngType="primary" (click)="state=ViewState.ListTickets">查看优惠券</button>
+    <!-- <button nz-button >Clear filters</button> -->
+    <!-- <button nz-button (click)="resetSortAndFilters()">Clear filters and sorters</button> -->
+  </div>
+
+
+  <div class="table-operations">
+    <!-- <button nz-button ngType="primary" (click)="showPublishModal=true">发布活动</button> -->
+    <!-- <button nz-button >Clear filters</button> -->
+    <!-- <button nz-button (click)="resetSortAndFilters()">Clear filters and sorters</button> -->
+  </div>
+  <nz-table #ajaxTable nzShowSizeChanger [nzDataSource]="dataSet" [nzLoading]="loading" [nzTotal]="total" [(nzPageIndex)]="pageIndex"
+    [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchData()" (nzPageSizeChange)="searchData(true)">
+    <thead nzSingleSort>
+      <tr>
+        <th nzShowSort nzSortKey="name">素材ID</th>
+        <th></th>
+        <!-- <th nzShowFilter>活动标题</th> -->
+        <th nzShowSort nzSortKey="email">
+          <span>素材前台图片</span>
+        </th>
+        <th nzShowSort nzSortKey="email">
+          <span>素材活动图片</span>
+        </th>
+        <th nzShowSort nzSortKey="email">
+          <span>Logo/微信分享图片</span>
+        </th>
+        <th>活动发起时间</th>
+        <th>有效天数</th>
+        <!-- <th nzShowSort nzSortKey="email"> -->
+        <!-- <span>是否可注册获得</span> -->
+        <!-- </th> -->
+        <!-- <th nzShowSort nzSortKey="email"> -->
+        <!-- <span>是否可分享获得</span> -->
+        <!-- </th> -->
+        <!-- <th nzShowSort nzSortKey="email"> -->
+        <!-- <span>是否可赠与他人</span> -->
+        <!-- </th> -->
+        <th>店铺座机</th>
+        <th>操作</th>
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of dataSet">
+        <td>{{data.id}}</td>
+        <td>{{data.coupon_name}}</td>
+        <td>
+          <img [src]="data.home_image_url" alt="">
+        </td>
+        <td>
+          <img [src]="data.ticket_image_url" alt="">
+        </td>
+        <td>
+          <img [src]="data.share_image_url" alt="">
+        </td>
+        <td>{{data.time_start|date:'yyyy-MM-dd'}}</td>
+        <td>{{data.valid_days}}</td>
+        <!-- <td>{{data.reg_give?'是':'否'}}</td> -->
+        <!-- <td>{{data.can_share?'是':'否'}}</td> -->
+        <!-- <td>{{data.can_give_other?'是':'否'}}</td> -->
+        <td>{{data.shop_phone}}</td>
+        <td>
+          <button nz-button nzType="primary" (click)="selectMaterial(data); state=ViewState.CreateMaterial;">修改活动资料</button>
+          <button nz-button nzType="primary" (click)="downloadMaterialQrcode(data.id)">保存活动二维码</button>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+
+</div>
+
+
+
+
+<div style="background:#fff;padding:30px" *ngIf="state==ViewState.ListTickets">
+  <div class="table-operations">
+    <button nz-button ngType="primary" (click)="state=ViewState.ListMaterial">查看优惠券素材</button>
+    <!-- <button nz-button >Clear filters</button> -->
+    <!-- <button nz-button (click)="resetSortAndFilters()">Clear filters and sorters</button> -->
+  </div>
+
+
+  <div class="table-operations">
+    <!-- <button nz-button ngType="primary" (click)="showPublishModal=true">发布活动</button> -->
+    <!-- <button nz-button >Clear filters</button> -->
+    <!-- <button nz-button (click)="resetSortAndFilters()">Clear filters and sorters</button> -->
+  </div>
+  <nz-table #ajaxTable2 nzShowSizeChanger [nzData]="usersClaimGroup" [nzLoading]="loading" [nzTotal]="total" [(nzPageIndex)]="pageIndex"
+    [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchTickets()" (nzPageSizeChange)="searchTickets(true)">
+    <thead nzSingleSort>
+      <tr>
+        <th nzShowSort nzSortKey="name">id</th>
+        <!-- <th nzShowFilter>活动标题</th> -->
+        <th nzShowSort nzSortKey="email">
+          <span>用户名</span>
+        </th>
+        <th nzShowSort nzSortKey="email">
+          <span>优惠券数量</span>
+        </th>
+
+        <th nzShowSort nzSortKey="email">
+          <span>注册获得</span>
+        </th>
+        <th nzShowSort nzSortKey="email">
+          <span>分享获得</span>
+        </th>
+        <th nzShowSort nzSortKey="email">
+          <span>赠与他人</span>
+        </th>
+        <th>活动发起时间</th>
+        <!-- <th>店铺座机</th> -->
+        <th>操作</th>
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of usersClaimGroup">
+        <td>{{data.user_id}}</td>
+
+
+        <td>{{data.user_name}}</td>
+        <td>{{data.children?.length}}
+          <span *ngIf="!data.children">0</span>
+        </td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <!-- <td>{{data.shop_phone}}</td> -->
+        <td>
+          <button nz-button nzType="primary">详情</button>
+
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+
+</div>
+
+
+
+<div class="container bg-gray" *ngIf="ViewState.CreateMaterial==state">
+  <div class="container bg-white materials">
+    <!-- <nz-modal style="position: relative;" [nzWidth]="800" [(nzVisible)]="ViewState.CreateMaterial==state" nzTitle="编辑活动素材" (nzOnCancel)="state=ViewState.ListMaterial" -->
+    <!-- (nzOnOk)="state=ViewState.ListMaterial;createMaterial()"> -->
+    <div style="display:flex">
+      <div style="width:550px;flex-shrink: 0;height: 100%;padding:20px;">
+        <h4>素材库</h4>
+        <div style="padding: 26px 16px 16px;">
+          <button nz-button nzType="primary" (click)="selectImageGroup()">全部</button>
+          <button nz-button nzType="primary" nzGhost (click)="selectImageGroup(group.groupName)" *ngFor="let group of imageGroups">{{group.groupName}}</button>
+
+        </div>
+        <div class="materials">
+          <div *ngFor="let image of images" style="margin-bottom: 20px;position:relative;" class="material-item">
+            <div class="cover">
+              <button nz-button nzType="primary" (click)="copyText(image.url)">复制链接</button>
+            </div>
+            <img [src]="image.url" alt="">
+
+          </div>
+        </div>
+      </div>
+      <div style="width:100%;display: flex;">
+
+        <nz-tabset style="flex-shrink: 0;width:400px;">
+          <nz-tab nzTitle="活动海报">
+            <img src="/assets/images/upload-image.png" style="width:104px;height:104px" *ngIf="!selectedMaterial.home_image_url">
+            <img [src]="selectedMaterial.home_image_url" alt="" *ngIf="selectedMaterial.home_image_url" style="max-width: 200px;">
+            <div (click)="modifyHomeImageUrl()" style="
+                        display: flex;
+                        flex-direction: column;
+                    "></div>
+            <label for="">活动海报</label>
+            <button nz-button (click)="showLinkModal=true">地址修改</button>
+            <button nz-button (click)="modifyHomeImageUrl()">上传本地图片</button>
+
+          </nz-tab>
+          <nz-tab nzTitle="活动详情页面">
+            <div style="
+                        display: flex;
+                        flex-direction: column;
+                    ">
+              <label for="">优惠券海报</label>
+              <img src="/assets/images/upload-image.png" style="width:104px;height:104px" *ngIf="!selectedMaterial.ticket_image_url">
+              <img [src]="selectedMaterial.ticket_image_url" alt="" *ngIf="selectedMaterial.ticket_image_url" style="max-width: 200px;">
+
+
+            </div>
+            <button nz-button (click)="showLinkModal2=true">地址修改</button>
+            <button nz-button (click)="modifyTicketImageUrl()">上传本地图片</button>
+
+          </nz-tab>
+          <nz-tab nzTitle="分享图标和Logo">
+            <div style="
+                    display: flex;
+                    flex-direction: column;
+                ">
+              <label for=""> 店铺logo</label>
+
+              <img src="/assets/images/upload-image.png" style="width:104px;height:104px" *ngIf="!selectedMaterial.share_image_url" style="max-width: 40px;">
+              <img [src]="selectedMaterial.share_image_url" alt="" *ngIf="selectedMaterial.share_image_url" style="max-width: 40px;">
+
+              <button nz-button (click)="showLinkModal3=true">地址修改</button>
+              <button nz-button (click)=" modifyShareImageUrl()">上传本地图片</button>
+            </div>
+          </nz-tab>
+        </nz-tabset>
+
+
+
+        <nz-tabset style="width: 100%">
+          <nz-tab nzTitle="活动首页">
+            <div class="phone" style="position:relative">
+              <div style="position:relative">
+                <img src="http://www.framework7.cn/i/status-bar.png" alt="" class="status-bar">
+
+                <div alt="" style="max-width: 100%;    max-width: 100%;
+                                                  height: 442px;
+                                                  width: 320px;
+                                                  background-size: cover;" [style.backgroundImage]="'url('+selectedMaterial.home_image_url+ ')'">
+
+                </div>
+                <div style="    position: absolute;
+                                  top: 40px;
+                                  text-align: center;
+                                  display: flex;
+                                  justify-content: center;
+                                  align-items: center;
+                                  width: 100%;">
+                  <ul class="info" style="margin-top: 5.5rem;">
+                    <li>
+                      <input type="text" placeholder="请输入手机号" style="color: rgb(255, 255, 255);font-size:1rem">
+                    </li>
+                    <li style="
+                                                margin-top: 1rem;
+                                                margin-bottom: 1rem;
+                                            ">
+                      <div class="flex-between" style="height: 2rem;">
+                        <input type="number" id="mobile" placeholder="验证码登录" v-model="authcode" style="width: 6rem; color: rgb(255, 255, 255);font-size:1rem">
+                        <button id="btn" style="background: rgb(207, 169, 114);border-radius: 25px;    outline: none;"> 获取验证码</button>
+                      </div>
+                    </li>
+                    <button class=" login-btn" style="width: 100%;font-size:.9rem;"> 登录 / 注册</button>
+                  </ul>
+
+                </div>
+                <img [src]="selectedMaterial.share_image_url" alt="" class="logo">
+
+
+              </div>
+            </div>
+          </nz-tab>
+          <nz-tab nzTitle="活动详情页面">
+            <div class="phone" style="position:relative">
+              <div style="position:relative">
+                <img src="http://www.framework7.cn/i/status-bar.png" alt="" class="status-bar">
+
+                <div alt="" style="max-width: 100%;    max-width: 100%;
+                                                  height: 442px;
+                                                  width: 320px;
+                                                  background-size: cover;" [style.backgroundImage]="'url('+selectedMaterial.ticket_image_url+ ')'">
+
+
+
+                  <div style="    position: absolute;
+                                                  top: 40px;
+                                                  text-align: center;
+                                                  display: flex;
+                                                  justify-content: center;
+                                                  align-items: center;
+                                                  width: 100%;">
+                    <div style="    padding: 15px;
+                                      background: rgba(226,226,226,.7);
+                                      border-radius: 50%;">
+                      <img [src]="selectedMaterial.share_image_url" alt="" class="logo">
+                    </div>
+                  </div>
+
+
+                </div>
+              </div>
+            </div>
+          </nz-tab>
+
+        </nz-tabset>
+
+
+
+      </div>
+
+    </div>
+  </div>
+  <button (click)="createMaterial();" nz-button nzType="primary">创建素材</button>
+  <button nzType="default" nz-button (click)="state=ViewState.ListMaterial">返回</button>
+</div>
+<!-- </nz-modal> -->
+<!-- 链接上传 -->
+
+
+<nz-modal [(nzVisible)]="showLinkModal" nzTitle="外链接" (nzOnCancel)="showLinkModal=false" (nzOnOk)="selectedMaterial.home_image_url=urlInput.value;showLinkModal=false">
+  <input nz-input placeholder="外链接" #urlInput>
+</nz-modal>
+<nz-modal [(nzVisible)]="showLinkModal2" nzTitle="外链接" (nzOnCancel)="showLinkModal2=false" (nzOnOk)="selectedMaterial.ticket_image_url=urlInput2.value;showLinkModal2=false">
+  <input nz-input placeholder="外链接" #urlInput2>
+</nz-modal>
+<nz-modal [(nzVisible)]="showLinkModal3" nzTitle="外链接" (nzOnCancel)="showLinkModal3=false" (nzOnOk)="selectedMaterial.share_image_url=urlInput3.value;showLinkModal3=false">
+  <input nz-input placeholder="外链接" #urlInput3>
+</nz-modal>

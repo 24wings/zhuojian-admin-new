@@ -1,0 +1,139 @@
+<div class="container">
+  <nz-breadcrumb style="margin:12px 0;">
+    <nz-breadcrumb-item>
+      <a> 系统管理</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item>
+      <a routerLink="/admin/system/role"> 角色管理</a>
+    </nz-breadcrumb-item>
+  </nz-breadcrumb>
+</div>
+
+
+<div class="container bg-gray" *ngIf="state==ViewState.List">
+  <div style="background:#fff;padding:15px;padding-top:50px;">
+    <button nz-button nzType='primary' style="margin-right:50px;" (click)="state=ViewState.Create">+新建角色</button>
+    <button nz-button nzType='danger' (click)="deleteRoles()">删除选中</button>
+    <nz-alert style="margin:40px auto" nzType="info" [nzMessage]="'已选择 4 项   涉及人员 20人 清空    '" nzShowIcon></nz-alert>
+    <nz-table #ajaxTable [nzData]="dataSet" [nzShowPagination]="false" [nzLoading]="loading">
+      <thead nzSingleSort>
+        <tr>
+          <th nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
+
+          <th nzShowSort nzShowFilter>角色</th>
+          <th nzShowFilter>权限
+          </th>
+          <th nzShowSort nzSortKey="email">
+            <span>角色数量/人
+            </span>
+          </th>
+          <th>
+            创建时间
+
+          </th>
+          <th>上次更新时间
+          </th>
+
+          <th>操作</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of ajaxTable.data">
+          <td nzShowCheckbox [(nzChecked)]="data.checked"></td>
+          <td>{{data.name }}</td>
+          <td>{{data.modules_ids_str.join(',')}}</td>
+          <td>{{data.keyword}}</td>
+          <td>{{data.link}}</td>
+
+          <td>{{data.update_at | date:'yyyy-mm-dd'}}</td>
+          <td>
+            <button nz-button nzType='danger' (click)="deleteRole(data.id)">删除</button>
+            <button nz-button nzType='primary' (click)="selectRole(data);state=ViewState.Update;">修改</button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <nz-pagination [nzPageIndex]="pageIndex" [nzTotal]="total" nzShowSizeChanger (nzPageIndexChange)="getModuleGroup()" [nzPageSize]="pageSize"
+      style="text-align:right;margin-top: 40px;"></nz-pagination>
+  </div>
+</div>
+
+
+
+
+
+
+
+<!-- 新建角色 -->
+<div class="container bg-gray animated" [class.rollOut]="state!=ViewState.Create" [class.rollIn]="state==ViewState.Create"
+  *ngIf="state==ViewState.Create">
+  <div style="background:#fff;padding:30px">
+    <div nz-form>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>角色名称
+
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input [(ngModel)]="newRole.name">
+
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div style="border: 1px dotted darkgrey;margin-top:40px;padding:15px;" *ngFor="let group of groups">
+      <div style="border-bottom: 1px solid rgb(233, 233, 233);padding-bottom: 10px;">
+        <label nz-checkbox [(ngModel)]="group.checkAll" (ngModelChange)="updateAllChecked(group)" [nzIndeterminate]="group.indeterminate">
+          {{group.label}}
+        </label>
+      </div>
+      <br>
+      <nz-checkbox-group [(ngModel)]="group.children" (ngModelChange)="updateSingleChecked(group)"></nz-checkbox-group>
+    </div>
+
+    <nz-button-group [nzSize]="'large'" class="flex-center" style="margin-top:40px;">
+      <button nz-button nzType="primary" class="large" (click)="createRole()">保存</button>
+      <!-- <button nz-button nzType="dashed" nzSize="large" class="large" (click)="reset()"> 还原</button> -->
+      <button nzSize="'large'" nz-button class="large" (click)="state=ViewState.List">返回</button>
+    </nz-button-group>
+  </div>
+
+</div>
+
+
+<!-- 更新角色 -->
+<div class="container bg-gray animated" [class.rollOut]="state!=ViewState.Update" [class.rollIn]="state==ViewState.Update"
+  *ngIf="state==ViewState.Update">
+  <div style="background:#fff;padding:30px">
+    <ng-container *ngIf="selectedRole">
+      <div nz-form>
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>角色名称
+
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input nz-input [(ngModel)]="selectedRole.name">
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div style="border: 1px dotted darkgrey;margin-top:40px;padding:15px;" *ngFor="let group of groups">
+        <div style="border-bottom: 1px solid rgb(233, 233, 233);padding-bottom: 10px;">
+          <label nz-checkbox [(ngModel)]="group.checkAll" (ngModelChange)="updateAllChecked(group)" [nzIndeterminate]="group.indeterminate">
+            {{group.label}}
+          </label>
+        </div>
+        <br>
+        <nz-checkbox-group [(ngModel)]="group.children" (ngModelChange)="updateSingleChecked(group)"></nz-checkbox-group>
+      </div>
+
+      <nz-button-group [nzSize]="'large'" class="flex-center" style="margin-top:40px;">
+        <button nz-button nzType="primary" class="large" (click)="updateRole()">保存</button>
+        <button nz-button nzType="dashed" nzSize="large" class="large" (click)="reset()"> 还原</button>
+        <button nzSize="'large'" nz-button class="large" (click)="state=ViewState.List">返回</button>
+      </nz-button-group>
+    </ng-container>
+
+  </div>
+
+
+</div>
