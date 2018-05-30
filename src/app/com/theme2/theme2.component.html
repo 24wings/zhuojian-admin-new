@@ -1,0 +1,26 @@
+<div class="phone" style="position:relative" *ngIf="mode==1">
+  <div style="position:relative">
+    <img src="http://www.framework7.cn/i/status-bar.png" alt="" class="status-bar">
+
+    <div style="height: 600px;overflow-y: scroll;">
+      <img [src]="home_image_url" alt="" *ngFor="let home_image_url of material.home_image_urls" style="width: 100%;">
+    </div>
+
+  </div>
+</div>
+
+
+<div class="phone" style="position:relative" *ngIf="mode==2">
+  <div style="position:relative">
+    <img src="http://www.framework7.cn/i/status-bar.png" alt="" class="status-bar">
+    <div style="height: 600px;overflow-y: scroll;">
+      <img [src]="ticket_image_url" alt="" *ngFor="let ticket_image_url of material.ticket_image_urls" style="width: 100%;">
+    </div>
+
+
+
+    <img [src]="material.share_image_url" alt="" class="logo">
+
+
+  </div>
+</div>

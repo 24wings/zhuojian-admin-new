@@ -1,6 +1,6 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
-import { registerLocaleData, } from "@angular/common";
+import { registerLocaleData } from "@angular/common";
 // import zh from "@angular/common/locales/zh";
 // registerLocaleData(zh);
 import { RouterModule } from "@angular/router";
@@ -37,24 +37,20 @@ import { ArticleAnalysisPageComponent } from "./pages/home-page/article-analysis
 import { ProductMetaPageComponent } from "./pages/home-page/product-meta-page/product-meta-page.component";
 import { ProductManagePageComponent } from "./pages/home-page/product-manage-page/product-manage-page.component";
 import { HirePageComponent } from "./pages/home-page/hire-page/hire-page.component";
-import { SignupPageComponent } from './pages/signup-page/signup-page.component';
+import { SignupPageComponent } from "./pages/signup-page/signup-page.component";
+import { Theme1Component } from "./com/theme1/theme1.component";
+import { Theme2Component } from "./com/theme2/theme2.component";
 @NgModule({
   declarations: [
     AppComponent,
     LoginPageComponent,
     HomePageComponent,
-
     WechatPageComponent,
     StrKeyPipe,
-
     RolePageComponent,
-
     ModulePageComponent,
-
     MaterialPageComponent,
-
     UserPageComponent,
-
     ArticleManagePageComponent,
     ArticleVerifyPageComponent,
     ArticleTypePageComponent,
@@ -62,7 +58,9 @@ import { SignupPageComponent } from './pages/signup-page/signup-page.component';
     ProductMetaPageComponent,
     ProductManagePageComponent,
     HirePageComponent,
-    SignupPageComponent
+    SignupPageComponent,
+    Theme1Component,
+    Theme2Component
   ],
   imports: [
     // NzCardModule,
@@ -81,7 +79,7 @@ import { SignupPageComponent } from './pages/signup-page/signup-page.component';
     RouterModule.forRoot([
       { path: "", redirectTo: "/admin/login", pathMatch: "full" },
       { path: "admin/login", component: LoginPageComponent },
-      { path: 'admin/signup', component: SignupPageComponent },
+      { path: "admin/signup", component: SignupPageComponent },
       {
         path: "admin",
         component: HomePageComponent,
@@ -145,4 +143,4 @@ import { SignupPageComponent } from './pages/signup-page/signup-page.component';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

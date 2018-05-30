@@ -39,6 +39,7 @@ interface IMaterial {
   reg_give?: boolean;
   can_share?: boolean;
   can_give_other?: boolean;
+  theme_type: number;
 }
 
 interface IModule {

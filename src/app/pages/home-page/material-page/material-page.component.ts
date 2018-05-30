@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 
 import { PcClientService, CommonService, AdminService } from "../../../lib";
 import * as $ from "jquery";
+import { ENGINE_METHOD_DIGESTS } from "constants";
 
 declare var document: any;
 declare var window: any;
@@ -16,6 +17,7 @@ enum ViewState {
   styleUrls: ["./material-page.component.css"]
 })
 export class MaterialPageComponent implements OnInit {
+  mode = 1;
   showLinkModal: boolean = false;
   showLinkModal2: boolean = false;
   showLinkModal3: boolean = false;
@@ -30,11 +32,12 @@ export class MaterialPageComponent implements OnInit {
   dataSet = [];
   images: any[] = [];
   showPublishModal: boolean = false;
+  selectedTheme = 1;
   ticketsDataSet = [];
 
   selectedMaterial = {
-    home_image_url: "",
-    ticket_image_url: "",
+    home_image_urls: [],
+    ticket_image_urls: [],
     share_image_url: ""
   };
   imageGroups: any[] = [];
@@ -59,6 +62,14 @@ export class MaterialPageComponent implements OnInit {
   }[] = [];
 
   listMaterials() {}
+
+  removeHomeImageUrl(home_image_url) {
+    let i = this.selectedMaterial.home_image_urls.findIndex(
+      url => url == home_image_url
+    );
+    this.selectedMaterial.home_image_urls.splice(i, 1);
+  }
+
   async searchData(reset: boolean = false) {
     if (reset) {
       this.pageIndex = 1;
@@ -73,21 +84,22 @@ export class MaterialPageComponent implements OnInit {
   async modifyHomeImageUrl() {
     let base64 = await this.common.selectFile();
     let result = await this.common.uploadImage(base64);
-    this.selectedMaterial.home_image_url = result.url;
+    this.selectedMaterial.home_image_urls.push(result.url);
   }
   selectMaterial(material) {
     this.selectedMaterial = material;
-    if (!this.selectedMaterial.home_image_url)
-      this.selectedMaterial.home_image_url = `http://store.airuanjian.vip/material/02.png`;
+    this.selectedTheme = this.selectedMaterial["theme_type"];
+    // if (!this.selectedMaterial.home_image_urls)
+    // this.selectedMaterial.home_image_urls.push(`http://store.airuanjian.vip/material/02.png`);
     if (!this.selectedMaterial.share_image_url)
       this.selectedMaterial.share_image_url = `http://store.airuanjian.vip/material/default-share-image-url.png`;
-    if (!this.selectedMaterial.ticket_image_url)
-      this.selectedMaterial.ticket_image_url = `http://store.airuanjian.vip/material/04.png`;
+    // if (!this.selectedMaterial.ticket_image_url)
+    // this.selectedMaterial.ticket_image_url = `http://store.airuanjian.vip/material/04.png`;
   }
   async modifyTicketImageUrl() {
     let base64 = await this.common.selectFile();
     let result = await this.common.uploadImage(base64);
-    this.selectedMaterial.ticket_image_url = result.url;
+    this.selectedMaterial.ticket_image_urls.push(result.url);
   }
   async modifyShareImageUrl() {
     let base64 = await this.common.selectFile();
@@ -109,20 +121,30 @@ export class MaterialPageComponent implements OnInit {
     let result = await this.common.uploadImage(base64);
     switch (type) {
       case 1:
-        this.selectedMaterial.home_image_url = result.url;
+        this.selectedMaterial.home_image_urls.push(result.url);
         break;
       case 2:
-        this.selectedMaterial.ticket_image_url = result.url;
+        this.selectedMaterial.ticket_image_urls.push(result.url);
         break;
       default:
         this.selectedMaterial.share_image_url = result.url;
         break;
     }
   }
-
+  changeMode($event) {
+    console.log((this.mode = $event + 1));
+  }
   async createMaterial() {
     console.log(this.selectedMaterial);
     this.loading = true;
+    this.selectedMaterial[
+      "home_image_url"
+    ] = this.selectedMaterial.home_image_urls.join(",");
+    this.selectedMaterial[
+      "ticket_image_url"
+    ] = this.selectedMaterial.ticket_image_urls.join(",");
+    this.selectedMaterial["theme_type"] = this.selectedTheme;
+    console.log(this.selectedMaterial);
     await this.pcClient.createMaterial(this.selectedMaterial);
 
     await this.searchData();

@@ -23,7 +23,7 @@ export class PcClientService {
     getTicketsByKeyword: "/pc/get-tickets-by-keyword"
   };
   getTicketsByKeyword(keyword: string) {
-    return this.http.Get(this.pcIp + this.pcClientApi.getTicketsByKeyword, {
+    return this.http.Get(this.pcClientApi.getTicketsByKeyword, {
       params: { keyword, shop_id: this.storage.shop_id }
     });
   }
@@ -45,20 +45,17 @@ export class PcClientService {
    * 
    */
   listCouponAndMaterialByShopId() {
-    return this.http.Get(
-      this.pcIp + this.pcClientApi.listCouponAndMaterialByShopId,
-      {
-        params: { shop_id: this.shop_id }
-      }
-    );
+    return this.http.Get(this.pcClientApi.listCouponAndMaterialByShopId, {
+      params: { shop_id: this.shop_id }
+    });
   }
 
   /** base64数据 */
   url2Qrcode(url: string): Promise<string> {
-    return this.http.Post(this.pcIp + `/api.url2Qrcode.go`, { url });
+    return this.http.Post(`/api.url2Qrcode.go`, { url });
   }
   login(shop_id: string, password: string) {
-    return this.http.Post(this.pcIp + this.pcClientApi.login, {
+    return this.http.Post(this.pcClientApi.login, {
       shop_id,
       password
     });
@@ -66,27 +63,28 @@ export class PcClientService {
 
   /**发送验证码 */
   async getAuthCode(phone: string) {
-    return await this.http.Post(this.pcIp + "/sale.signupAuthCode.go", {
+    return await this.http.Post("/sale.signupAuthCode.go", {
       phone
     });
   }
   async listMaterials(page: number = 0, size: number = 10) {
-    return this.http.Get(this.pcIp + this.pcClientApi.listMaterials, {
+    return this.http.Get(this.pcClientApi.listMaterials, {
       params: { shop_id: this.shop_id, page, size }
     });
   }
   async createMaterial(material: IMaterial) {
     material.shopuser_id = this.storage.shop_id as any;
-    return this.http.Post(this.pcIp + this.pcClientApi.createMaterial, {
+    return this.http.Post(this.pcClientApi.createMaterial, {
       shopuser_id: this.storage.shop_id,
       home_image_url: material.home_image_url,
       ticket_image_url: material.ticket_image_url,
       share_image_url: material.share_image_url,
-      coupon_id: material.coupon_id2
+      coupon_id: material.coupon_id2,
+      theme_type: material.theme_type
     });
   }
   async uploadBase64(base64: string) {
-    return this.http.Post(this.pcIp + this.pcClientApi.uploadImage, { base64 });
+    return this.http.Post(this.pcClientApi.uploadImage, { base64 });
   }
 
   constructor(public http: MyHttpService, public storage: StorageService) {}

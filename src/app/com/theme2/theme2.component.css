@@ -314,7 +314,7 @@ textarea:-ms-input-placeholder {
 .material-item .cover {
   display: none;
   top: 0;
-  max-width: 225px;
+  max-width: 200px;
   left: 0;
   background: #fff;
   width: 100%;
@@ -323,4 +323,8 @@ textarea:-ms-input-placeholder {
   position: absolute;
   justify-content: center;
   align-items: center;
+}
+
+.img {
+  width: 100%;
 }

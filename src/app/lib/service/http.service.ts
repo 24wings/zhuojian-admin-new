@@ -12,8 +12,8 @@ import { FindValueSubscriber } from "rxjs/operators/find";
 
 @Injectable()
 export class MyHttpService {
-  isMock: boolean = true;
-  isDev: boolean = true;
+  isMock: boolean = false;
+  isDev: boolean = false;
   get ip() {
     return this.isDev ? this.localIp : this.serverIp;
   }
@@ -22,15 +22,14 @@ export class MyHttpService {
   Get(url: string, options?: RequestOptionsArgs) {
     console.log(url);
     // url =
-    //   url.startsWith("http") || url.startsWith("/assets")
-    //     ? url
+    //   url.startsWith("http") || url.startsWith("/assets")     ? url
     //     : `${this.ip}${url}`;
     if (this.isMock) {
       return this.mockGet(url);
     }
 
     return this.http
-      .get(url, options)
+      .get(`${this.ip}${url}`, options)
       .toPromise()
       .then(rtn => {
         let result = rtn.json() as any;
@@ -59,7 +58,7 @@ export class MyHttpService {
     });
     // options.withCredentials = true;
     return this.http
-      .post(`${url}.json`, body, options)
+      .post(`${this.ip}${url}`, body, options)
       .toPromise()
       .then(rtn => {
         let result = rtn.json() as any;
