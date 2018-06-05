@@ -38,7 +38,8 @@ export class MaterialPageComponent implements OnInit {
   selectedMaterial = {
     home_image_urls: [],
     ticket_image_urls: [],
-    share_image_url: ""
+    share_image_url: "",
+    theme_type: 1
   };
   imageGroups: any[] = [];
   constructor(
@@ -60,7 +61,24 @@ export class MaterialPageComponent implements OnInit {
     shop_phone: any;
     children: any[];
   }[] = [];
+  /**
+   * 图库类型
+   *
+   * 1. 数量
+   *
+   * 2. 图片
+   */
+  libMode = 1;
 
+  libChange(libMode: number) {
+    if (libMode == 1) {
+      this.getImageMaterials();
+    } else {
+      console.log("获取商家的图库");
+      this.getShopImages();
+    }
+    this.libMode = libMode;
+  }
   listMaterials() {}
 
   removeHomeImageUrl(home_image_url) {
@@ -68,6 +86,20 @@ export class MaterialPageComponent implements OnInit {
       url => url == home_image_url
     );
     this.selectedMaterial.home_image_urls.splice(i, 1);
+  }
+  removeTicketImageUrl(ticket_image_url) {
+    let i = this.selectedMaterial.ticket_image_urls.findIndex(
+      url => url == ticket_image_url
+    );
+    this.selectedMaterial.ticket_image_urls.splice(i, 1);
+  }
+  removeImage(url) {
+    if (this.mode == 1) {
+      this.removeHomeImageUrl(url);
+    }
+    if (this.mode == 2) {
+      this.removeTicketImageUrl(url);
+    }
   }
 
   async searchData(reset: boolean = false) {
@@ -89,12 +121,22 @@ export class MaterialPageComponent implements OnInit {
   selectMaterial(material) {
     this.selectedMaterial = material;
     this.selectedTheme = this.selectedMaterial["theme_type"];
-    // if (!this.selectedMaterial.home_image_urls)
-    // this.selectedMaterial.home_image_urls.push(`http://store.airuanjian.vip/material/02.png`);
+    if (
+      !this.selectedMaterial.home_image_urls ||
+      this.selectedMaterial.home_image_urls.length < 1
+    )
+      this.selectedMaterial.home_image_urls = [
+        `http://bangwei-store.oss-cn-beijing.aliyuncs.com//images/1527838581114.png`
+      ];
     if (!this.selectedMaterial.share_image_url)
       this.selectedMaterial.share_image_url = `http://store.airuanjian.vip/material/default-share-image-url.png`;
-    // if (!this.selectedMaterial.ticket_image_url)
-    // this.selectedMaterial.ticket_image_url = `http://store.airuanjian.vip/material/04.png`;
+    if (
+      !this.selectedMaterial.ticket_image_urls ||
+      this.selectedMaterial.ticket_image_urls.length < 1
+    )
+      this.selectedMaterial.ticket_image_urls = [
+        `http://bangwei-store.oss-cn-beijing.aliyuncs.com//images/1527853264501.png`
+      ];
   }
   async modifyTicketImageUrl() {
     let base64 = await this.common.selectFile();
@@ -193,6 +235,30 @@ export class MaterialPageComponent implements OnInit {
       this.images = images;
     }
   }
+  addImage(url) {
+    console.log(`url:`, url, `mode:`, this.mode);
+    switch (this.mode) {
+      case 1:
+        this.selectedMaterial.home_image_urls.push(url);
+        break;
+      case 2:
+        this.selectedMaterial.ticket_image_urls.push(url);
+        break;
+    }
+    // console.log()
+  }
+
+  async uploadShopImage() {
+    let base64 = await this.common.selectFile();
+    let result = await this.pcClient.uploadShopImage(base64);
+    this.images.push(result);
+    this.addImage(result.url);
+  }
+
+  async getShopImages() {
+    this.images = await this.pcClient.getShopImages();
+  }
+
   copyText(text: string) {
     let textareaEl = document.createElement("textarea");
     textareaEl.value = text;

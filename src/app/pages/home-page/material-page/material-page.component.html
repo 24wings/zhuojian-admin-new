@@ -152,132 +152,122 @@
 
 
 <div class="container bg-gray" *ngIf="ViewState.CreateMaterial==state">
-  <div class="container bg-white materials" style="text-align: center;">
-    <!-- <nz-modal style="position: relative;" [nzWidth]="800" [(nzVisible)]="ViewState.CreateMaterial==state" nzTitle="编辑活动素材" (nzOnCancel)="state=ViewState.ListMaterial" -->
-    <!-- (nzOnOk)="state=ViewState.ListMaterial;createMaterial()"> -->
-    <div style="display:flex">
-      <div style="width:550px;flex-shrink: 0;height: 100%;padding:20px;">
-        <h4>素材库</h4>
+  <div class="container bg-white">
+
+    <div class=" materials" style="text-align: center;">
+
+      <!-- <nz-modal style="position: relative;" [nzWidth]="800" [(nzVisible)]="ViewState.CreateMaterial==state" nzTitle="编辑活动素材" (nzOnCancel)="state=ViewState.ListMaterial" -->
+      <!-- (nzOnOk)="state=ViewState.ListMaterial;createMaterial()"> -->
+
+      <div style="width:300px;flex-shrink: 0;height: 100%;padding:20px;">
         <div>
-          <label for="">活动主题</label>
-          <nz-select style="width: 120px;" [(ngModel)]="selectedTheme" nzAllowClear nzPlaceHolder="选择活动主题">
+          <button nz-button style="position:relative" (click)="libChange(1)" [nzType]="libMode==1?'primary':'default'">素材库</button>
+          <button nz-button (click)="libChange(2)" [nzType]="libMode==2?'primary':'default'">我的</button>
+        </div>
+        <!-- <div> -->
+        <!-- <label for="">活动主题</label> -->
+        <!-- <nz-select style="width: 120px;" [(ngModel)]="selectedTheme" nzAllowClear nzPlaceHolder="选择活动主题">
             <nz-option [nzValue]="1" nzLabel="海报"></nz-option>
             <nz-option [nzValue]="2" nzLabel="店铺展示"></nz-option>
 
-          </nz-select>
+          </nz-select> -->
 
-        </div>
-        <div style="padding: 26px 16px 16px;">
-          <button nz-button nzType="primary" (click)="selectImageGroup()">全部</button>
-          <button nz-button nzType="primary" nzGhost (click)="selectImageGroup(group.groupName)" *ngFor="let group of imageGroups">{{group.groupName}}</button>
+        <!-- </div> -->
+        <!-- <div style="padding: 26px 16px 16px;"> -->
+        <!-- <button nz-button nzType="primary" (click)="selectImageGroup()">全部</button> -->
+        <!-- <button nz-button nzType="primary" nzGhost (click)="selectImageGroup(group.groupName)" *ngFor="let group of imageGroups">{{group.groupName}}</button> -->
 
-        </div>
+        <!-- </div> -->
         <div class="materials" style="text-align: center;    max-height: 500px;">
           <div *ngFor="let image of images" style="margin-bottom: 20px;position:relative;" class="material-item">
             <div class="cover">
-              <button nz-button nzType="primary" (click)="copyText(image.url)">复制链接</button>
+              <button nz-button nzType="primary" (click)="addImage(image.url)">+</button>
             </div>
             <img [src]="image.url" alt="">
 
           </div>
+
+          <div style="margin-bottom: 20px;position:relative;" class="material-item" *ngIf="libMode==2" (click)="uploadShopImage()">
+            <img src="/assets/images/upload.png" alt="">
+          </div>
         </div>
       </div>
-      <div style="width:100%;display: flex;">
-
+      <div style="height:100%;">
         <nz-tabset style="flex-shrink: 0;width:400px;" (nzSelectedIndexChange)="changeMode($event)">
-          <nz-tab nzTitle="活动海报">
+          <nz-tab nzTitle="海报">
             <!-- <img src="/assets/images/upload-image.png" style="width:104px;height:104px" *ngIf="!selectedMaterial.home_image_url"> -->
             <div class="materials" style="text-align: center;">
               <div style="position:relative" class="material-item" *ngFor="let home_image_url of selectedMaterial.home_image_urls">
                 <img [src]="home_image_url" alt="" *ngIf="home_image_url" style="max-width: 100px;">
                 <div class="cover">
-                  <button nz-button nzType="primary" (click)="removeHomeImageUrl(home_image_url)">移除</button>
+                  <button nz-button nzType="primary" (click)="removeImage(home_image_url)">移除</button>
                 </div>
               </div>
-
-
             </div>
-
-
-
             <div (click)="modifyHomeImageUrl()" style="
                         display: flex;
                         flex-direction: column;
                     "></div>
-            <label for="">活动海报</label>
-            <button nz-button (click)="showLinkModal=true">添加图片</button>
-            <button nz-button (click)="modifyHomeImageUrl()">上传本地图片</button>
-
+            <!-- <label for="">活动海报</label> -->
+            <!-- <button nz-button (click)="showLinkModal=true">添加图片</button> -->
+            <!-- <button nz-button (click)="modifyHomeImageUrl()">上传本地图片</button> -->
           </nz-tab>
-          <nz-tab nzTitle="活动详情页面">
+          <nz-tab nzTitle="详情">
             <div style="
                         display: flex;
                         flex-direction: column;
                     ">
               <label for="">优惠券海报</label>
-
-
               <div class="materials">
                 <div style="position:relative" class="material-item" *ngFor="let ticket_image_url of selectedMaterial.ticket_image_urls">
                   <img [src]="ticket_image_url" alt="" style="max-width: 100px;">
                   <div class="cover">
-                    <button nz-button nzType="primary" (click)="removeHomeImageUrl(ticket_image_url)">移除</button>
+                    <button nz-button nzType="primary" (click)="removeImage(ticket_image_url)">移除</button>
                   </div>
                 </div>
-
-
               </div>
-
             </div>
-            <button nz-button (click)="showLinkModal2=true">添加图片地址</button>
-            <button nz-button (click)="modifyTicketImageUrl()">上传本地图片</button>
-
+            <!-- <button nz-button (click)="showLinkModal2=true">添加图片地址</button> -->
+            <!-- <button nz-button (click)="modifyTicketImageUrl()">上传本地图片</button> -->
           </nz-tab>
-          <nz-tab nzTitle="分享图标和Logo">
-            <div style="
-                    display: flex;
-                    flex-direction: column;
-                ">
-              <label for=""> 店铺logo</label>
-
+          <nz-tab nzTitle="Logo">
+            <div style="">
+              <!-- <label for=""> </label> -->
               <img src="/assets/images/upload-image.png" style="width:104px;height:104px" *ngIf="!selectedMaterial.share_image_url" style="max-width: 40px;">
               <img [src]="selectedMaterial.share_image_url" alt="" *ngIf="selectedMaterial.share_image_url" style="max-width: 40px;">
-
-              <button nz-button (click)="showLinkModal3=true">地址修改</button>
-              <button nz-button (click)=" modifyShareImageUrl()">上传本地图片</button>
+              <div>
+                <button nz-button (click)="showLinkModal3=true">地址修改</button>
+                <button nz-button (click)=" modifyShareImageUrl()">上传本地图片</button>
+              </div>
             </div>
           </nz-tab>
         </nz-tabset>
+      </div>
+      <div *ngIf="selectedMaterial" style="margin-left: 40px;">
+        <span [ngSwitch]="selectedTheme">
+          <p *ngSwitchCase="1">
+            <app-theme1 [mode]="mode" [material]="selectedMaterial"></app-theme1>
+          </p>
+          <p *ngSwitchCase="2">
+            <app-theme2 [mode]="1" [material]="selectedMaterial"></app-theme2>
+          </p>
+          <p *ngSwitchDefault>
+
+          </p>
+        </span>
+        <!-- <button nz-button nzType="primary" (click)="mode=1">海报页面</button> -->
+        <!-- <button nz-button nzType="primary" (click)="mode=2">活动详情页面</button> -->
 
 
-        <br>
-        <div *ngIf="selectedMaterial" style="    margin-top: 100px;
-        margin-left: 40px;">
-          <span [ngSwitch]="selectedTheme">
-            <p *ngSwitchCase="1">
-              <app-theme1 [mode]="mode" [material]="selectedMaterial"></app-theme1>
-            </p>
-            <p *ngSwitchCase="2">
-              <app-theme2 [mode]="mode" [material]="selectedMaterial"></app-theme2>
-            </p>
-            <p *ngSwitchDefault>
-
-            </p>
-          </span>
-          <!-- <button nz-button nzType="primary" (click)="mode=1">海报页面</button> -->
-          <!-- <button nz-button nzType="primary" (click)="mode=2">活动详情页面</button> -->
-
-        </div>
 
       </div>
 
-
     </div>
-
-
+    <div style="    text-align: center;">
+      <button (click)="createMaterial();" nz-button nzType="primary">更新素材</button>
+      <button nzType="default" nz-button (click)="state=ViewState.ListMaterial">返回</button>
+    </div>
   </div>
-  <button (click)="createMaterial();" nz-button nzType="primary">创建素材</button>
-  <button nzType="default" nz-button (click)="state=ViewState.ListMaterial">返回</button>
 </div>
 <!-- </nz-modal> -->
 <!-- 链接上传 -->

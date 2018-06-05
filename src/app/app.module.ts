@@ -1,8 +1,8 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
 import { registerLocaleData } from "@angular/common";
-// import zh from "@angular/common/locales/zh";
-// registerLocaleData(zh);
+import zh from "@angular/common/locales/zh";
+registerLocaleData(zh);
 import { RouterModule } from "@angular/router";
 import { LibModule } from "./lib";
 import {
@@ -40,6 +40,8 @@ import { HirePageComponent } from "./pages/home-page/hire-page/hire-page.compone
 import { SignupPageComponent } from "./pages/signup-page/signup-page.component";
 import { Theme1Component } from "./com/theme1/theme1.component";
 import { Theme2Component } from "./com/theme2/theme2.component";
+
+import { DaliyReportPageComponent } from "./pages/home-page/daliy-report-page/daliy-report-page.component";
 @NgModule({
   declarations: [
     AppComponent,
@@ -60,7 +62,9 @@ import { Theme2Component } from "./com/theme2/theme2.component";
     HirePageComponent,
     SignupPageComponent,
     Theme1Component,
-    Theme2Component
+    Theme2Component,
+
+    DaliyReportPageComponent
   ],
   imports: [
     // NzCardModule,
@@ -134,6 +138,10 @@ import { Theme2Component } from "./com/theme2/theme2.component";
           {
             path: "activity/hire",
             component: HirePageComponent
+          },
+          {
+            path: "activity/dialy-report",
+            component: DaliyReportPageComponent
           }
         ]
       }

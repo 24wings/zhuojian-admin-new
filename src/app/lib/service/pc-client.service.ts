@@ -8,6 +8,7 @@ export class PcClientService {
   get pcIp() {
     return "http://47.100.23.203";
   }
+
   get shop_id() {
     return localStorage.getItem("shop_id");
   }
@@ -20,13 +21,27 @@ export class PcClientService {
     createMaterial: "/create-material",
     uploadImage: "/common/upload/image",
     listCouponAndMaterialByShopId: "/pc/list-coupin-and-material-by-shop_id",
-    getTicketsByKeyword: "/pc/get-tickets-by-keyword"
+    getTicketsByKeyword: "/pc/get-tickets-by-keyword",
+    uploadShopImage: "/api/shop/upload-image",
+    getShopImages: "/api/shop/get-shop-images" // ?shop_id  body:
   };
+
   getTicketsByKeyword(keyword: string) {
     return this.http.Get(this.pcClientApi.getTicketsByKeyword, {
       params: { keyword, shop_id: this.storage.shop_id }
     });
   }
+
+  async uploadShopImage(base64: string) {
+    return await this.http.Post(
+      this.pcClientApi.uploadShopImage,
+      {
+        base64
+      },
+      { params: { shop_id: this.shop_id } }
+    );
+  }
+
   /**
    * 
    *  .get("/auth", home.index)
@@ -58,6 +73,11 @@ export class PcClientService {
     return this.http.Post(this.pcClientApi.login, {
       shop_id,
       password
+    });
+  }
+  getShopImages() {
+    return this.http.Get(this.pcClientApi.getShopImages, {
+      params: { shop_id: this.shop_id }
     });
   }
 

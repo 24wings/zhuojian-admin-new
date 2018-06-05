@@ -1,0 +1,306 @@
+<div class="container">
+  <nz-breadcrumb style="margin:12px 0;">
+    <nz-breadcrumb-item>
+      <a> 活动管理</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item>
+      <a routerLink="/admin/article/article-type"> 企业报表</a>
+    </nz-breadcrumb-item>
+  </nz-breadcrumb>
+</div>
+
+
+<div class="container bg-gray" *ngIf="state==ViewState.List" style="">
+  <div style="background:#fff;padding:15px;padding-top:50px;">
+    <button nz-button nzType='primary' style="margin-right:50px;" (click)="state=ViewState.Create">+添加每日报表</button>
+    <button nz-button nzType='danger' (click)="deleteArticleCategorys()">删除选中</button>
+    <nz-alert style="margin:40px auto" nzType="info" [nzMessage]="'已选择 4 项   涉及人员 20人 清空 '" nzShowIcon></nz-alert>
+    <nz-table #ajaxTable [nzData]="dataSet" [nzNoResult]="'元'" [nzShowPagination]="false" [nzLoading]="loading">
+      <thead nzSingleSort>
+        <tr>
+          <th nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
+
+          <th nzShowSort nzShowFilter>ID</th>
+          <th nzShowFilter>报表日期
+          </th>
+          <th nzShowSort nzSortKey="email">
+            <span>店铺</span>
+          </th>
+          <th>
+            示意图
+          </th>
+          <th>排序</th>
+          <th>
+            创建时间
+          </th>
+          <th>上次更新时间
+          </th>
+
+          <th>操作</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of ajaxTable.data">
+          <td nzShowCheckbox [(nzChecked)]="data.checked"></td>
+          <td>{{data.id}}</td>
+          <td>{{data.name }}</td>
+          <td>{{data.num }}</td>
+
+          <td>
+            <img [src]="data.images[0]" class="avatar" alt="">
+          </td>
+          <td>{{data.sort }}</td>
+          <td>{{data.created_at|date:'yyyy-mm-dd'}}</td>
+
+          <td>{{data.update_at | date:'yyyy-mm-dd'}}</td>
+          <td>
+            <button nz-button nzType='danger' (click)="deleteArticleCategory(data.id)">删除</button>
+            <button nz-button nzType='primary' (click)="selectArticleType(data);state=ViewState.Update; ">修改</button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <nz-pagination [nzPageIndex]="pageIndex" [nzTotal]="total" nzShowSizeChanger [nzPageSize]="10" style="text-align:right;margin-top: 40px;"></nz-pagination>
+  </div>
+</div>
+
+<!-- 审核文章 -->
+<div *ngIf="ViewState.Create==state" style="    max-width: 940px;
+margin-left: auto;
+margin-right: auto;
+">
+
+  <div nz-form class="container bg-white">
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>店铺名称
+
+      </nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24">
+        <input nz-input [(ngModel)]="newArticleType.name">
+
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>报表人</nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24">
+        <input nz-input [(ngModel)]="newArticleType.name">
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>报表时间</nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24">
+        <nz-date-picker [(ngModel)]="date" nzShowTime></nz-date-picker>
+
+      </nz-form-control>
+    </nz-form-item>
+
+
+    <!-- <div style="display: grid;grid-template-columns: 1fr 1fr 1fr 1fr"> -->
+    <!-- 
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>口碑
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>美团
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>会员
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>散客
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+        </nz-form-control>
+      </nz-form-item> -->
+
+    <!-- </div> -->
+    <nz-table #basicTable [nzData]="dataSet" [nzNoResult]="'客户'">
+      <thead>
+        <tr>
+          <th>口碑</th>
+          <th>美团</th>
+          <th>会员 </th>
+          <th>散客</th>
+          <th>男客</th>
+          <th>女客</th>
+          <th>等待</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+          </td>
+          <td>
+            <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+          </td>
+          <td>
+            <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+          </td>
+          <td>
+            <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+          </td>
+          <td>
+            <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+          </td>
+          <td>
+            <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+          </td>
+          <td>
+            <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+          </td>
+
+        </tr>
+
+      </tbody>
+    </nz-table>
+    <nz-table #basicTable [nzData]="dataSet" [nzNoResult]="'会员'">
+      <thead>
+        <tr>
+          <th>充卡金额</th>
+          <th>会员消费</th>
+          <th>会员总数 </th>
+          <th>新增会员</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+          </td>
+          <td>
+            <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+          </td>
+          <td>
+            <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+          </td>
+          <td>
+            <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+
+    <nz-table #basicTable [nzData]="dataSet" [nzNoResult]="'房间与岗位'">
+      <thead>
+        <tr>
+          <th>使用房间</th>
+          <th>空出房间</th>
+          <th>在岗技师 </th>
+          <th>不在岗技师</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+          </td>
+          <td>
+            <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+          </td>
+          <td>
+            <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+          </td>
+          <td>
+            <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <nz-table #basicTable [nzData]="dataSet" [nzNoResult]="'流水'">
+      <thead>
+        <tr>
+          <th>主项</th>
+          <th>主项数量</th>
+          <th>副项 </th>
+          <th>副项数量</th>
+          <th>商品</th>
+          <th>商品数量</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <input nz-input [(ngModel)]="newArticleType.sort">
+          </td>
+          <td>
+            <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+          </td>
+          <td>
+            <input nz-input [(ngModel)]="newArticleType.sort">
+          </td>
+          <td>
+            <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+          </td>
+          <td>
+            <input nz-input [(ngModel)]="newArticleType.sort">
+          </td>
+          <td>
+            <nz-input-number nz-input [(ngModel)]="newArticleType.sort" [nzMin]="0"> </nz-input-number>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+
+  </div>
+</div>
+
+
+<!-- 审核栏目 -->
+<div *ngIf="ViewState.Update==state">
+  <ng-container *ngIf="selectedArticle">
+    <div nz-form>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>人员昵称
+
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input [(ngModel)]="selectedArticle.title">
+
+        </nz-form-control>
+      </nz-form-item>
+
+
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>示例图组
+
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+
+          <nz-upload [nzCustomRequest]="upload" [nzData]="nzData" [nzAction]="myHttp.ip+common.commonApi.uploadFile" nzListType="picture-card"
+            [(nzFileList)]="fileList" [nzShowButton]="fileList.length < 3" [nzPreview]="handlePreview">
+            <i class="anticon anticon-plus"></i>
+            <div class="ant-upload-text">上传</div>
+          </nz-upload>
+        </nz-form-control>
+      </nz-form-item>
+
+
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>排序
+
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input type="number" [(ngModel)]="selectedArticleType.sort">
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </ng-container>
+  <!-- </nz-modal> -->
+</div>

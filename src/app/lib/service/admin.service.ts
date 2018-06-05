@@ -44,6 +44,7 @@ export class AdminService {
       refuseArticle: "/admin/refuse-article" //文章审核不通过
     }
   };
+
   passArticle(articles_id: string) {
     return this.api.Post(this.adminApi.articleModule.passArticle, {
       articles_id
